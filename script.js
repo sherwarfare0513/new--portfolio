@@ -284,6 +284,7 @@ if (window.React && window.ReactDOM) {
         ];
 
         const [active, setActive] = useState('home');
+        const [menuOpen, setMenuOpen] = useState(false);
 
         useEffect(() => {
             const onScroll = () => {
@@ -302,19 +303,30 @@ if (window.React && window.ReactDOM) {
             return () => window.removeEventListener('scroll', onScroll);
         }, []);
 
+        const toggleMenu = () => {
+            setMenuOpen(!menuOpen);
+        };
+
+        const closeMenu = () => {
+            setMenuOpen(false);
+        };
+
         return (
             React.createElement('div', { className: 'nav-container' },
-                React.createElement('a', { href: '#home', className: 'logo', onClick: () => { setActive('home'); }},
+                React.createElement('a', { href: '#home', className: 'logo', onClick: () => { setActive('home'); closeMenu(); }},
                     React.createElement('div', { className: 'logo-mark', 'aria-hidden': 'true' }, 'TV'),
                     React.createElement('div', { className: 'logo-text' }, 'TechVerse'),
                     React.createElement('div', { className: 'logo-sub' }, 'by Sher')
                 ),
-                React.createElement('div', { className: 'hamburger-menu', id: 'hamburger' },
+                React.createElement('div', { 
+                    className: `hamburger-menu ${menuOpen ? 'active' : ''}`, 
+                    onClick: toggleMenu 
+                },
                     React.createElement('span', null),
                     React.createElement('span', null),
                     React.createElement('span', null)
                 ),
-                React.createElement('ul', { className: 'nav-menu', id: 'nav-menu' },
+                React.createElement('ul', { className: `nav-menu ${menuOpen ? 'active' : ''}` },
                     sections.map(item => React.createElement('li', { key: item.id },
                         React.createElement('a', {
                             href: `#${item.id}`,
@@ -326,6 +338,7 @@ if (window.React && window.ReactDOM) {
                                     tgt.scrollIntoView({ behavior: 'smooth', block: 'start' });
                                     setActive(item.id);
                                 }
+                                closeMenu();
                             }
                         }, item.label)
                     ))

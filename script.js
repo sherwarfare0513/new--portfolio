@@ -292,6 +292,8 @@ function openHireModal() {
         hireModal.classList.add('show');
         hireModal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        hireModal.scrollTop = 0;
+        hireModal.querySelector('.modal-content')?.scrollTo(0, 0);
         document.getElementById('hire-name')?.focus();
     }
 }
@@ -336,29 +338,6 @@ if (hireModalClose) {
 if (workModalClose) {
     workModalClose.addEventListener('click', closeWorkModal);
 }
-
-if (hireModal) {
-    hireModal.addEventListener('click', function (event) {
-        if (event.target === hireModal) {
-            closeHireModal();
-        }
-    });
-}
-
-if (workModal) {
-    workModal.addEventListener('click', function (event) {
-        if (event.target === workModal) {
-            closeWorkModal();
-        }
-    });
-}
-
-document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-        closeHireModal();
-        closeWorkModal();
-    }
-});
 
 hireMethodInputs.forEach(input => {
     input.addEventListener('change', updateHireMethodHint);

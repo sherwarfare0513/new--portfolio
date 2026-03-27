@@ -2322,3 +2322,85 @@ body {
         font-size: 1rem !important;
     }
 }
+
+/* Responsive entrance motion */
+body.js-motion {
+    --reveal-distance: 72px;
+    --reveal-duration: 880ms;
+    --reveal-scale: 0.985;
+    --reveal-blur: 12px;
+    --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.js-motion.motion-mobile {
+    --reveal-distance: 36px;
+    --reveal-duration: 620ms;
+    --reveal-scale: 0.995;
+    --reveal-blur: 7px;
+}
+
+body.js-motion.motion-desktop {
+    --reveal-distance: 88px;
+    --reveal-duration: 960ms;
+}
+
+body.js-motion .hero-content,
+body.js-motion .service-card,
+body.js-motion .project-card,
+body.js-motion .skill-group,
+body.js-motion .highlight-card,
+body.js-motion .stat,
+body.js-motion .info-item,
+body.js-motion .footer-section,
+body.js-motion .footer-bottom {
+    animation: none !important;
+}
+
+body.js-motion [data-reveal] {
+    animation: none !important;
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance), 0) scale(var(--reveal-scale));
+    filter: blur(var(--reveal-blur));
+    transition:
+        opacity var(--reveal-duration) var(--reveal-ease) var(--reveal-delay, 0ms),
+        transform var(--reveal-duration) var(--reveal-ease) var(--reveal-delay, 0ms),
+        filter var(--reveal-duration) ease var(--reveal-delay, 0ms);
+    will-change: opacity, transform, filter;
+}
+
+body.js-motion [data-reveal][data-reveal-origin="top"] {
+    transform: translate3d(0, calc(var(--reveal-distance) * -0.7), 0) scale(var(--reveal-scale));
+}
+
+body.js-motion [data-reveal][data-reveal-origin="left"] {
+    transform: translate3d(calc(var(--reveal-distance) * -0.7), 0, 0) scale(var(--reveal-scale));
+}
+
+body.js-motion [data-reveal][data-reveal-origin="right"] {
+    transform: translate3d(calc(var(--reveal-distance) * 0.7), 0, 0) scale(var(--reveal-scale));
+}
+
+body.js-motion [data-reveal].is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+}
+
+body.js-motion .hero-highlights {
+    transition-duration: calc(var(--reveal-duration) + 120ms);
+}
+
+body.js-motion.motion-mobile .hero-highlights,
+body.js-motion.motion-mobile .cta-buttons,
+body.js-motion.motion-mobile .skills-banner-wrap {
+    transition-duration: calc(var(--reveal-duration) + 40ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.js-motion [data-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        transition: none !important;
+    }
+}

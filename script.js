@@ -69,27 +69,168 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Intersection Observer for animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+// Responsive staged motion system
+const motionMediaQuery = window.matchMedia('(max-width: 768px)');
+const motionProfiles = {
+    mobile: {
+        bodyClass: 'motion-mobile',
+        heroStartDelay: 120,
+        heroStep: 90,
+        stagger: 70,
+        threshold: 0.08,
+        rootMargin: '0px 0px -10% 0px'
+    },
+    desktop: {
+        bodyClass: 'motion-desktop',
+        heroStartDelay: 180,
+        heroStep: 140,
+        stagger: 110,
+        threshold: 0.16,
+        rootMargin: '0px 0px -16% 0px'
+    }
 };
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.animation = 'slideUp 0.8s ease-out forwards';
-            observer.unobserve(entry.target);
+function getMotionProfile() {
+    return motionMediaQuery.matches ? motionProfiles.mobile : motionProfiles.desktop;
+}
+
+function syncMotionViewportClass() {
+    document.body.classList.add('js-motion');
+    document.body.classList.toggle('motion-mobile', motionMediaQuery.matches);
+    document.body.classList.toggle('motion-desktop', !motionMediaQuery.matches);
+}
+
+function assignReveal(element, delay, type = 'scroll', origin = 'bottom') {
+    if (!element) return;
+    element.dataset.reveal = type;
+    if (origin !== 'bottom') {
+        element.dataset.revealOrigin = origin;
+    }
+    element.style.setProperty('--reveal-delay', `${delay}ms`);
+}
+
+function registerRevealSection(sectionSelector, groups) {
+    const section = document.querySelector(sectionSelector);
+    if (!section) return null;
+
+    section.dataset.revealSection = 'true';
+
+    groups.forEach(group => {
+        const step = group.step ?? getMotionProfile().stagger;
+        section.querySelectorAll(group.selector).forEach((element, index) => {
+            assignReveal(
+                element,
+                (group.startDelay || 0) + (index * step),
+                'scroll',
+                group.origin || 'bottom'
+            );
+        });
+    });
+
+    return section;
+}
+
+function setupResponsiveMotion() {
+    syncMotionViewportClass();
+
+    const profile = getMotionProfile();
+    const sectionsToObserve = [];
+
+    assignReveal(document.querySelector('.navbar'), 0, 'load', 'top');
+
+    [
+        '.hero-content .greeting',
+        '.hero-content .hero-title',
+        '.hero-content .hero-role',
+        '.hero-content .hero-subtitle',
+        '.hero-content .hero-highlights',
+        '.hero-content .cta-buttons',
+        '.hero-image'
+    ].forEach((selector, index) => {
+        assignReveal(
+            document.querySelector(selector),
+            profile.heroStartDelay + (index * profile.heroStep),
+            'load',
+            selector === '.hero-image' ? 'right' : 'bottom'
+        );
+    });
+
+    [
+        registerRevealSection('#services', [
+            { selector: '.section-title', startDelay: 0 },
+            { selector: '.section-subtitle', startDelay: 90 },
+            { selector: '.service-card', startDelay: 180 }
+        ]),
+        registerRevealSection('#skills', [
+            { selector: '.section-title', startDelay: 0 },
+            { selector: '.skills-banner-wrap', startDelay: 90 },
+            { selector: '.skill-group', startDelay: 180 }
+        ]),
+        registerRevealSection('#projects', [
+            { selector: '.section-title', startDelay: 0 },
+            { selector: '.section-subtitle', startDelay: 90 },
+            { selector: '.project-card', startDelay: 180 }
+        ]),
+        registerRevealSection('#about', [
+            { selector: '.section-title', startDelay: 0 },
+            { selector: '.about-image', startDelay: 100, origin: 'left' },
+            { selector: '.about-text > h3', startDelay: 180 },
+            { selector: '.about-text > p', startDelay: 240, step: 90 },
+            { selector: '.highlight-card', startDelay: 320 },
+            { selector: '.stat', startDelay: 400 }
+        ]),
+        registerRevealSection('#contact', [
+            { selector: '.section-title', startDelay: 0 },
+            { selector: '.section-subtitle', startDelay: 90 },
+            { selector: '.contact-visual', startDelay: 160, origin: 'left' },
+            { selector: '.info-item, .social-info', startDelay: 240 },
+            { selector: '.contact-form', startDelay: 340, origin: 'right' }
+        ]),
+        registerRevealSection('.footer', [
+            { selector: '.footer-section', startDelay: 0 },
+            { selector: '.footer-bottom', startDelay: 220 }
+        ])
+    ].forEach(section => {
+        if (section) {
+            sectionsToObserve.push(section);
         }
     });
-}, observerOptions);
 
-// Observe elements
-const cards = document.querySelectorAll('.service-card, .project-card, .skill-group, .highlight-card, .stat, .info-item');
-cards.forEach((card, index) => {
-    card.style.animationDelay = `${index * 0.1}s`;
-    observer.observe(card);
-});
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            entry.target.classList.add('section-in-view');
+            entry.target.querySelectorAll('[data-reveal="scroll"]').forEach(element => {
+                element.classList.add('is-visible');
+            });
+            revealObserver.unobserve(entry.target);
+        });
+    }, {
+        threshold: profile.threshold,
+        rootMargin: profile.rootMargin
+    });
+
+    sectionsToObserve.forEach(section => revealObserver.observe(section));
+}
+
+function runEntranceSequence() {
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.querySelectorAll('[data-reveal="load"]').forEach(element => {
+                element.classList.add('is-visible');
+            });
+        });
+    });
+}
+
+setupResponsiveMotion();
+
+if (typeof motionMediaQuery.addEventListener === 'function') {
+    motionMediaQuery.addEventListener('change', syncMotionViewportClass);
+} else if (typeof motionMediaQuery.addListener === 'function') {
+    motionMediaQuery.addListener(syncMotionViewportClass);
+}
 
 // Newsletter subscription
 const newsletterForm = document.querySelector('.newsletter-input');
@@ -542,3 +683,5 @@ if (window.React && window.ReactDOM) {
         fallback.style.display = 'none';
     }
 }
+
+runEntranceSequence();

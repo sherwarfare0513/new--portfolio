@@ -1078,6 +1078,27 @@ body {
     font-weight: 600;
 }
 
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.4rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.project-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+}
+
 /* About Section */
 .about {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1511,6 +1532,50 @@ body {
     margin-bottom: 1rem;
     color: #1b2a57;
     font-size: 1.7rem;
+}
+
+.work-modal-content {
+    max-width: 560px;
+}
+
+.work-modal-text {
+    margin: 0 0 1rem;
+    color: #5a678f;
+    font-size: 0.96rem;
+    line-height: 1.6;
+}
+
+.work-links-list {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.work-link-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 14px;
+    text-decoration: none;
+    background: linear-gradient(135deg, #f8faff 0%, #eef4ff 100%);
+    border: 1px solid #d7e2fb;
+    color: #1b2a57;
+    font-weight: 700;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.work-link-item strong {
+    color: #2563eb;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.work-link-item:hover {
+    transform: translateY(-2px);
+    border-color: #7aa2ff;
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.14);
 }
 
 .hire-methods {

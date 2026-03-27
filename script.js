@@ -237,6 +237,9 @@ progressBars.forEach(bar => {
 const hireModal = document.getElementById('hire-modal');
 const hireModalClose = document.getElementById('hire-modal-close');
 const hireBtn = document.getElementById('hire-me-btn');
+const workModal = document.getElementById('work-modal');
+const workModalClose = document.getElementById('work-modal-close');
+const viewWorkBtn = document.getElementById('view-work');
 const hireForm = document.getElementById('hire-form');
 const hireMethodInputs = document.querySelectorAll('input[name="hire-method"]');
 const hireMethodHint = document.getElementById('hire-method-hint');
@@ -301,12 +304,37 @@ function closeHireModal() {
     }
 }
 
+function openWorkModal() {
+    if (workModal) {
+        workModal.classList.add('show');
+        workModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        workModal.querySelector('.work-link-item')?.focus();
+    }
+}
+
+function closeWorkModal() {
+    if (workModal) {
+        workModal.classList.remove('show');
+        workModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+}
+
 if (hireBtn) {
     hireBtn.addEventListener('click', openHireModal);
 }
 
+if (viewWorkBtn) {
+    viewWorkBtn.addEventListener('click', openWorkModal);
+}
+
 if (hireModalClose) {
     hireModalClose.addEventListener('click', closeHireModal);
+}
+
+if (workModalClose) {
+    workModalClose.addEventListener('click', closeWorkModal);
 }
 
 if (hireModal) {
@@ -317,9 +345,18 @@ if (hireModal) {
     });
 }
 
+if (workModal) {
+    workModal.addEventListener('click', function (event) {
+        if (event.target === workModal) {
+            closeWorkModal();
+        }
+    });
+}
+
 document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
         closeHireModal();
+        closeWorkModal();
     }
 });
 

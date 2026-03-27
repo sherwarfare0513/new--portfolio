@@ -1545,6 +1545,10 @@ body {
     max-width: 560px;
 }
 
+.phone-choice-content {
+    max-width: 460px;
+}
+
 .work-modal-text {
     margin: 0 0 1rem;
     color: #5a678f;
@@ -1630,6 +1634,71 @@ body {
     accent-color: #667eea;
 }
 
+.contact-number-trigger {
+    border: none;
+    background: none;
+    padding: 0;
+    color: #2563eb;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-number-trigger:hover {
+    color: #1d4ed8;
+    transform: translateX(2px);
+}
+
+.contact-number-trigger:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.2);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+.phone-choice-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.phone-choice-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    min-height: 64px;
+    padding: 1rem 1.1rem;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    border: 1px solid transparent;
+}
+
+.phone-choice-action i {
+    font-size: 1.2rem;
+}
+
+.phone-choice-action:hover {
+    transform: translateY(-2px);
+}
+
+.whatsapp-action {
+    background: linear-gradient(135deg, #ebfff4 0%, #d8fbe8 100%);
+    border-color: #9ce0b8;
+    color: #116534;
+    box-shadow: 0 14px 28px rgba(17, 101, 52, 0.1);
+}
+
+.call-action {
+    background: linear-gradient(135deg, #f8faff 0%, #eaf1ff 100%);
+    border-color: #c8d8ff;
+    color: #1d4ed8;
+    box-shadow: 0 14px 28px rgba(29, 78, 216, 0.1);
+}
+
 .hire-method-hint {
     margin: 0 0 0.9rem;
     color: #5a678f;
@@ -1694,6 +1763,10 @@ body {
 
 @media (max-width: 520px) {
     .hire-methods {
+        grid-template-columns: 1fr;
+    }
+
+    .phone-choice-actions {
         grid-template-columns: 1fr;
     }
 }

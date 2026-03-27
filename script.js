@@ -410,6 +410,14 @@ const hireBtn = document.getElementById('hire-me-btn');
 const workModal = document.getElementById('work-modal');
 const workModalClose = document.getElementById('work-modal-close');
 const viewWorkBtn = document.getElementById('view-work');
+const phoneChoiceModal = document.getElementById('phone-choice-modal');
+const phoneChoiceClose = document.getElementById('phone-choice-close');
+const phoneChoiceText = document.getElementById('phone-choice-text');
+const phoneWhatsappLink = document.getElementById('phone-whatsapp-link');
+const phoneCallLink = document.getElementById('phone-call-link');
+const phoneTriggers = document.querySelectorAll('.contact-number-trigger');
+let activePhoneNumber = '';
+let activePhoneDisplay = '';
 const hireForm = document.getElementById('hire-form');
 const hireMethodInputs = document.querySelectorAll('input[name="hire-method"]');
 const hireMethodHint = document.getElementById('hire-method-hint');
@@ -493,6 +501,60 @@ function closeWorkModal() {
     }
 }
 
+function openPhoneChoiceModal(phoneNumber, phoneDisplay) {
+    if (!phoneChoiceModal || !phoneWhatsappLink || !phoneCallLink) {
+        return;
+    }
+
+    const whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent('Hello, I would like to contact you.');
+    activePhoneNumber = phoneNumber;
+    activePhoneDisplay = phoneDisplay;
+
+    phoneWhatsappLink.href = whatsappUrl;
+
+    if (phoneChoiceText) {
+        phoneChoiceText.textContent = 'Choose WhatsApp or phone call for ' + phoneDisplay + '.';
+    }
+
+    phoneChoiceModal.classList.add('show');
+    phoneChoiceModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    phoneWhatsappLink.focus();
+}
+
+function closePhoneChoiceModal() {
+    if (phoneChoiceModal) {
+        phoneChoiceModal.classList.remove('show');
+        phoneChoiceModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+}
+
+async function handlePhoneCallChoice() {
+    if (!activePhoneNumber) {
+        return;
+    }
+
+    const callUrl = 'tel:+' + activePhoneNumber;
+    const isMobileDevice = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+
+    if (isMobileDevice) {
+        window.location.href = callUrl;
+        return;
+    }
+
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText('+' + activePhoneNumber);
+            alert('Phone calls cannot be opened directly in the browser. The number has been copied: ' + activePhoneDisplay);
+        } else {
+            alert('Phone calls cannot be opened directly in the browser. Here is the number: ' + activePhoneDisplay);
+        }
+    } catch (error) {
+        alert('Phone calls cannot be opened directly in the browser. Here is the number: ' + activePhoneDisplay);
+    }
+}
+
 if (hireBtn) {
     hireBtn.addEventListener('click', openHireModal);
 }
@@ -508,6 +570,29 @@ if (hireModalClose) {
 if (workModalClose) {
     workModalClose.addEventListener('click', closeWorkModal);
 }
+
+if (phoneChoiceClose) {
+    phoneChoiceClose.addEventListener('click', closePhoneChoiceModal);
+}
+
+if (phoneCallLink) {
+    phoneCallLink.addEventListener('click', function () {
+        handlePhoneCallChoice();
+    });
+}
+
+phoneTriggers.forEach(trigger => {
+    trigger.addEventListener('click', function () {
+        const phoneNumber = this.dataset.phoneNumber;
+        const phoneDisplay = this.dataset.phoneDisplay || this.textContent.trim();
+
+        if (!phoneNumber) {
+            return;
+        }
+
+        openPhoneChoiceModal(phoneNumber, phoneDisplay);
+    });
+});
 
 hireMethodInputs.forEach(input => {
     input.addEventListener('change', updateHireMethodHint);
@@ -586,6 +671,39 @@ if (hireForm) {
         }
     });
 }
+
+[hireModal, workModal].forEach(modal => {
+    if (!modal) {
+        return;
+    }
+
+    modal.addEventListener('click', function (event) {
+        if (event.target !== modal) {
+            return;
+        }
+
+        if (modal === hireModal) {
+            closeHireModal();
+        } else if (modal === workModal) {
+            closeWorkModal();
+        }
+    });
+});
+
+document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') {
+        return;
+    }
+
+    if (workModal?.classList.contains('show')) {
+        closeWorkModal();
+        return;
+    }
+
+    if (hireModal?.classList.contains('show')) {
+        closeHireModal();
+    }
+});
 
 // Add animation styles
 const style = document.createElement('style');

@@ -449,8 +449,24 @@
                         <div class="info-item">
                             <i class="fas fa-phone"></i>
                             <h3>Phone</h3>
-                            <p><a href="tel:+923280513242">+92 3280513242</a></p>
-                            <p><a href="tel:+923495313242">+92 3495313242</a></p>
+                            <p>
+                                <button
+                                    class="contact-number-trigger"
+                                    type="button"
+                                    data-phone-display="+92 3280513242"
+                                    data-phone-number="923280513242">
+                                    +92 3280513242
+                                </button>
+                            </p>
+                            <p>
+                                <button
+                                    class="contact-number-trigger"
+                                    type="button"
+                                    data-phone-display="+92 3495313242"
+                                    data-phone-number="923495313242">
+                                    +92 3495313242
+                                </button>
+                            </p>
                         </div>
                         <div class="info-item">
                             <i class="fas fa-map-marker-alt"></i>
@@ -546,6 +562,27 @@
         </div>
     </div>
 
+    <!-- Phone Choice Modal -->
+    <div class="modal-overlay" id="phone-choice-modal" aria-hidden="true" role="dialog" aria-labelledby="phone-choice-title">
+        <div class="modal-content phone-choice-content">
+            <button class="modal-close" id="phone-choice-close" aria-label="Close phone options" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h2 id="phone-choice-title">Choose Contact Option</h2>
+            <p class="work-modal-text" id="phone-choice-text">Select how you want to contact this number.</p>
+            <div class="phone-choice-actions">
+                <a class="phone-choice-action whatsapp-action" id="phone-whatsapp-link" href="#" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                    <span>WhatsApp</span>
+                </a>
+                <button class="phone-choice-action call-action" id="phone-call-link" type="button">
+                    <i class="fas fa-phone-alt" aria-hidden="true"></i>
+                    <span>Phone Call</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -569,6 +606,10 @@
                         <div class="contact-item">
                             <i class="fas fa-phone"></i>
                             <span>+92 3280513242</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+92 3495313242</span>
                         </div>
                         <div class="contact-item">
                             <i class="fas fa-map-marker-alt"></i>

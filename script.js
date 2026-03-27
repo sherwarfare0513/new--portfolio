@@ -58,9 +58,15 @@ ctaButtons.forEach(button => {
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const href = this.getAttribute('href');
+
+        if (!href || href === '#' || !href.startsWith('#')) {
+            return;
+        }
+
+        const target = document.querySelector(href);
         if (target) {
+            e.preventDefault();
             target.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
@@ -506,7 +512,7 @@ function openPhoneChoiceModal(phoneNumber, phoneDisplay) {
         return;
     }
 
-    const whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent('Hello, I would like to contact you.');
+    const whatsappUrl = 'https://wa.me/' + phoneNumber + '?text=' + encodeURIComponent('Hello, I would like to contact you.');
     activePhoneNumber = phoneNumber;
     activePhoneDisplay = phoneDisplay;
 

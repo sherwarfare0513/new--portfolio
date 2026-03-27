@@ -2380,6 +2380,22 @@ body.js-motion [data-reveal][data-reveal-origin="right"] {
     transform: translate3d(calc(var(--reveal-distance) * 0.7), 0, 0) scale(var(--reveal-scale));
 }
 
+body.js-motion [data-reveal][data-reveal-origin="bottom-left"] {
+    transform: translate3d(calc(var(--reveal-distance) * -0.68), calc(var(--reveal-distance) * 0.72), 0) scale(var(--reveal-scale));
+}
+
+body.js-motion [data-reveal][data-reveal-origin="bottom-right"] {
+    transform: translate3d(calc(var(--reveal-distance) * 0.68), calc(var(--reveal-distance) * 0.72), 0) scale(var(--reveal-scale));
+}
+
+body.js-motion [data-reveal][data-reveal-origin="top-left"] {
+    transform: translate3d(calc(var(--reveal-distance) * -0.68), calc(var(--reveal-distance) * -0.72), 0) scale(var(--reveal-scale));
+}
+
+body.js-motion [data-reveal][data-reveal-origin="top-right"] {
+    transform: translate3d(calc(var(--reveal-distance) * 0.68), calc(var(--reveal-distance) * -0.72), 0) scale(var(--reveal-scale));
+}
+
 body.js-motion [data-reveal].is-visible {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);

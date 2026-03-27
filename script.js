@@ -109,11 +109,24 @@ function assignReveal(element, delay, type = 'scroll', origin = 'bottom') {
     element.style.setProperty('--reveal-delay', `${delay}ms`);
 }
 
+function resolveRevealOrigin(origin, index) {
+    if (Array.isArray(origin)) {
+        return origin[index % origin.length] || 'bottom';
+    }
+
+    if (typeof origin === 'function') {
+        return origin(index);
+    }
+
+    return origin || 'bottom';
+}
+
 function registerRevealSection(sectionSelector, groups) {
     const section = document.querySelector(sectionSelector);
-    if (!section) return null;
+    if (!section) return [];
 
     section.dataset.revealSection = 'true';
+    const revealElements = [];
 
     groups.forEach(group => {
         const step = group.step ?? getMotionProfile().stagger;
@@ -122,77 +135,96 @@ function registerRevealSection(sectionSelector, groups) {
                 element,
                 (group.startDelay || 0) + (index * step),
                 'scroll',
-                group.origin || 'bottom'
+                resolveRevealOrigin(group.origin, index)
             );
+            revealElements.push(element);
         });
     });
 
-    return section;
+    return revealElements;
 }
 
 function setupResponsiveMotion() {
     syncMotionViewportClass();
 
     const profile = getMotionProfile();
-    const sectionsToObserve = [];
+    const revealElements = new Set();
 
     assignReveal(document.querySelector('.navbar'), 0, 'load', 'top');
 
     [
-        '.hero-content .greeting',
-        '.hero-content .hero-title',
-        '.hero-content .hero-role',
-        '.hero-content .hero-subtitle',
-        '.hero-content .hero-highlights',
-        '.hero-content .cta-buttons',
-        '.hero-image'
-    ].forEach((selector, index) => {
-        assignReveal(
-            document.querySelector(selector),
-            profile.heroStartDelay + (index * profile.heroStep),
-            'load',
-            selector === '.hero-image' ? 'right' : 'bottom'
-        );
+        { selector: '.hero-content .greeting', delay: profile.heroStartDelay, origin: 'left' },
+        { selector: '.hero-content .hero-title', delay: profile.heroStartDelay + profile.heroStep, origin: 'bottom' },
+        { selector: '.hero-content .hero-role', delay: profile.heroStartDelay + (profile.heroStep * 2), origin: 'right' },
+        { selector: '.hero-content .hero-subtitle', delay: profile.heroStartDelay + (profile.heroStep * 3), origin: 'bottom' },
+        { selector: '.hero-highlights > div', delay: profile.heroStartDelay + (profile.heroStep * 4), step: profile.stagger, origin: ['left', 'bottom', 'right'] },
+        { selector: '.cta-buttons .cta-button', delay: profile.heroStartDelay + (profile.heroStep * 5), step: profile.stagger, origin: ['bottom-left', 'bottom-right'] },
+        { selector: '.hero-image', delay: profile.heroStartDelay + (profile.heroStep * 5), origin: 'right' }
+    ].forEach(group => {
+        document.querySelectorAll(group.selector).forEach((element, index) => {
+            assignReveal(
+                element,
+                group.delay + (index * (group.step || 0)),
+                'load',
+                resolveRevealOrigin(group.origin, index)
+            );
+        });
     });
 
     [
-        registerRevealSection('#services', [
-            { selector: '.section-title', startDelay: 0 },
-            { selector: '.section-subtitle', startDelay: 90 },
-            { selector: '.service-card', startDelay: 180 }
+        ...registerRevealSection('#services', [
+            { selector: '.section-title', startDelay: 0, origin: 'top' },
+            { selector: '.section-subtitle', startDelay: 110, origin: 'bottom' },
+            { selector: '.service-card', startDelay: 210, step: 140, origin: ['left', 'bottom', 'right'] },
+            { selector: '.service-card .service-icon', startDelay: 290, step: 110, origin: 'top' },
+            { selector: '.service-card h3', startDelay: 360, step: 110, origin: ['left', 'right'] },
+            { selector: '.service-card p', startDelay: 430, step: 110, origin: ['right', 'left'] },
+            { selector: '.service-card .service-list li', startDelay: 510, step: 55, origin: ['left', 'bottom', 'right', 'bottom-left'] }
         ]),
-        registerRevealSection('#skills', [
-            { selector: '.section-title', startDelay: 0 },
-            { selector: '.skills-banner-wrap', startDelay: 90 },
-            { selector: '.skill-group', startDelay: 180 }
+        ...registerRevealSection('#skills', [
+            { selector: '.section-title', startDelay: 0, origin: 'top' },
+            { selector: '.skills-banner-title', startDelay: 90, origin: 'left' },
+            { selector: '#skills-banner', startDelay: 160, origin: 'left' },
+            { selector: '.skills-banner-text', startDelay: 240, origin: 'right' },
+            { selector: '.skill-group', startDelay: 280, step: 140, origin: ['left', 'right', 'bottom-left', 'bottom-right'] },
+            { selector: '.skill-group h3', startDelay: 360, step: 120, origin: ['left', 'right'] },
+            { selector: '.skill-item', startDelay: 430, step: 60, origin: ['left', 'bottom', 'right', 'bottom-right'] }
         ]),
-        registerRevealSection('#projects', [
-            { selector: '.section-title', startDelay: 0 },
-            { selector: '.section-subtitle', startDelay: 90 },
-            { selector: '.project-card', startDelay: 180 }
+        ...registerRevealSection('#projects', [
+            { selector: '.section-title', startDelay: 0, origin: 'top' },
+            { selector: '.section-subtitle', startDelay: 110, origin: 'bottom' },
+            { selector: '.project-card', startDelay: 220, step: 150, origin: ['bottom-left', 'bottom', 'bottom-right'] },
+            { selector: '.project-image', startDelay: 280, step: 140, origin: ['left', 'right'] },
+            { selector: '.project-content h3', startDelay: 360, step: 120, origin: ['left', 'right'] },
+            { selector: '.project-content p', startDelay: 430, step: 120, origin: ['right', 'left'] },
+            { selector: '.project-tags span', startDelay: 500, step: 50, origin: ['bottom', 'bottom-left', 'bottom-right'] }
         ]),
-        registerRevealSection('#about', [
-            { selector: '.section-title', startDelay: 0 },
-            { selector: '.about-image', startDelay: 100, origin: 'left' },
-            { selector: '.about-text > h3', startDelay: 180 },
-            { selector: '.about-text > p', startDelay: 240, step: 90 },
-            { selector: '.highlight-card', startDelay: 320 },
-            { selector: '.stat', startDelay: 400 }
+        ...registerRevealSection('#about', [
+            { selector: '.section-title', startDelay: 0, origin: 'top' },
+            { selector: '.about-image', startDelay: 120, origin: 'left' },
+            { selector: '.about-text > h3', startDelay: 200, origin: 'right' },
+            { selector: '.about-text > p', startDelay: 280, step: 100, origin: ['bottom', 'bottom-right', 'bottom-left'] },
+            { selector: '.highlight-card', startDelay: 380, step: 110, origin: ['left', 'bottom', 'right'] },
+            { selector: '.stat', startDelay: 470, step: 100, origin: ['bottom-left', 'bottom', 'bottom-right'] }
         ]),
-        registerRevealSection('#contact', [
-            { selector: '.section-title', startDelay: 0 },
-            { selector: '.section-subtitle', startDelay: 90 },
-            { selector: '.contact-visual', startDelay: 160, origin: 'left' },
-            { selector: '.info-item, .social-info', startDelay: 240 },
-            { selector: '.contact-form', startDelay: 340, origin: 'right' }
+        ...registerRevealSection('#contact', [
+            { selector: '.section-title', startDelay: 0, origin: 'top' },
+            { selector: '.section-subtitle', startDelay: 100, origin: 'bottom' },
+            { selector: '.contact-visual img', startDelay: 180, origin: 'left' },
+            { selector: '.contact-visual p', startDelay: 250, origin: 'bottom-left' },
+            { selector: '.info-item', startDelay: 260, step: 120, origin: ['left', 'right', 'bottom-left'] },
+            { selector: '.social-info', startDelay: 380, origin: 'bottom' },
+            { selector: '.contact-form input', startDelay: 340, step: 70, origin: ['right', 'left', 'right'] },
+            { selector: '.contact-form textarea', startDelay: 560, origin: 'bottom-right' },
+            { selector: '.contact-form .submit-btn', startDelay: 640, origin: 'bottom' }
         ]),
-        registerRevealSection('.footer', [
-            { selector: '.footer-section', startDelay: 0 },
-            { selector: '.footer-bottom', startDelay: 220 }
+        ...registerRevealSection('.footer', [
+            { selector: '.footer-section', startDelay: 0, step: 120, origin: ['left', 'bottom-left', 'bottom-right', 'right'] },
+            { selector: '.footer-bottom', startDelay: 260, origin: 'bottom' }
         ])
-    ].forEach(section => {
-        if (section) {
-            sectionsToObserve.push(section);
+    ].forEach(element => {
+        if (element) {
+            revealElements.add(element);
         }
     });
 
@@ -200,10 +232,7 @@ function setupResponsiveMotion() {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
 
-            entry.target.classList.add('section-in-view');
-            entry.target.querySelectorAll('[data-reveal="scroll"]').forEach(element => {
-                element.classList.add('is-visible');
-            });
+            entry.target.classList.add('is-visible');
             revealObserver.unobserve(entry.target);
         });
     }, {
@@ -211,7 +240,7 @@ function setupResponsiveMotion() {
         rootMargin: profile.rootMargin
     });
 
-    sectionsToObserve.forEach(section => revealObserver.observe(section));
+    revealElements.forEach(element => revealObserver.observe(element));
 }
 
 function runEntranceSequence() {

@@ -233,6 +233,174 @@ progressBars.forEach(bar => {
     };
 })();
 
+// Hire Me modal logic
+const hireModal = document.getElementById('hire-modal');
+const hireModalClose = document.getElementById('hire-modal-close');
+const hireBtn = document.getElementById('hire-me-btn');
+const hireForm = document.getElementById('hire-form');
+const hireMethodInputs = document.querySelectorAll('input[name="hire-method"]');
+const hireMethodHint = document.getElementById('hire-method-hint');
+const hireEmailAddress = 'sherwarfare0513@gmail.com';
+const hireWhatsappNumber = '923280513242';
+const hireEmailEndpoint = 'https://formsubmit.co/ajax/sherwarfare0513@gmail.com';
+
+function getSelectedHireMethod() {
+    const selectedMethod = document.querySelector('input[name="hire-method"]:checked');
+    return selectedMethod ? selectedMethod.value : 'email';
+}
+
+function updateHireMethodHint() {
+    if (!hireMethodHint) return;
+
+    const selectedMethod = getSelectedHireMethod();
+    hireMethodHint.textContent = selectedMethod === 'whatsapp'
+        ? 'Your request will open in WhatsApp chat with a ready-made message.'
+        : 'Your request will be sent directly to email from the website.';
+}
+
+async function sendHireEmailRequest({ name, email, subject, message }) {
+    const response = await fetch(hireEmailEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            name,
+            email,
+            subject: 'Hire Request: ' + subject,
+            message,
+            _subject: 'Hire Request: ' + subject,
+            _template: 'table',
+            _captcha: 'false'
+        })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(result.message || 'Unable to send email request right now.');
+    }
+
+    return result;
+}
+
+function openHireModal() {
+    if (hireModal) {
+        hireModal.classList.add('show');
+        hireModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('hire-name')?.focus();
+    }
+}
+
+function closeHireModal() {
+    if (hireModal) {
+        hireModal.classList.remove('show');
+        hireModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+}
+
+if (hireBtn) {
+    hireBtn.addEventListener('click', openHireModal);
+}
+
+if (hireModalClose) {
+    hireModalClose.addEventListener('click', closeHireModal);
+}
+
+if (hireModal) {
+    hireModal.addEventListener('click', function (event) {
+        if (event.target === hireModal) {
+            closeHireModal();
+        }
+    });
+}
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        closeHireModal();
+    }
+});
+
+hireMethodInputs.forEach(input => {
+    input.addEventListener('change', updateHireMethodHint);
+});
+
+updateHireMethodHint();
+
+if (hireForm) {
+    hireForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const name = document.getElementById('hire-name').value.trim();
+        const email = document.getElementById('hire-email').value.trim();
+        const subject = document.getElementById('hire-subject').value.trim();
+        const message = document.getElementById('hire-message').value.trim();
+        const selectedMethod = getSelectedHireMethod();
+        const submitButton = hireForm.querySelector('.submit-btn');
+        const originalButtonText = submitButton ? submitButton.textContent : '';
+
+        if (!name || !email || !subject || !message) {
+            alert('Please complete all fields before sending your request.');
+            return;
+        }
+
+        const requestMessage = [
+            'New hire request',
+            '',
+            'Name: ' + name,
+            'Email: ' + email,
+            'Project Title: ' + subject,
+            'Project Details: ' + message
+        ].join('\n');
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = selectedMethod === 'whatsapp' ? 'Opening WhatsApp...' : 'Sending...';
+        }
+
+        try {
+            if (selectedMethod === 'whatsapp') {
+                const whatsappUrl = 'https://wa.me/' + hireWhatsappNumber + '?text=' + encodeURIComponent(requestMessage);
+                window.open(whatsappUrl, '_blank', 'noopener');
+                alert('WhatsApp is opening. Please send your hire request there.');
+            } else {
+                await sendHireEmailRequest({ name, email, subject, message: requestMessage });
+                alert('Your hire request has been sent directly by email.');
+            }
+
+            hireForm.reset();
+            const defaultMethod = document.querySelector('input[name="hire-method"][value="email"]');
+            if (defaultMethod) {
+                defaultMethod.checked = true;
+            }
+            updateHireMethodHint();
+            closeHireModal();
+
+            const contactSection = document.getElementById('contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } catch (error) {
+            if (selectedMethod === 'email') {
+                const mailtoUrl = 'mailto:' + hireEmailAddress
+                    + '?subject=' + encodeURIComponent('Hire Request: ' + subject)
+                    + '&body=' + encodeURIComponent(requestMessage);
+                window.location.href = mailtoUrl;
+                alert('Direct email sending is unavailable right now, so your email app has been opened instead.');
+            } else {
+                alert('The request could not be processed. Please try again.');
+            }
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+    });
+}
+
 // Add animation styles
 const style = document.createElement('style');
 style.textContent = `

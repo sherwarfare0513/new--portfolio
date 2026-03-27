@@ -55,8 +55,8 @@
                 </div>
 
                 <div class="cta-buttons">
-                    <button class="cta-button primary"><a href="#contact">Hire Me</a></button>
-                    <button class="cta-button secondary"><a href="#projects">View My Work</a></button>
+                    <button class="cta-button primary" id="hire-me-btn" type="button">Hire Me</button>
+                    <a class="cta-button secondary" id="view-work" href="#projects">View My Work</a>
                 </div>
             </div>
 
@@ -449,6 +449,33 @@
             </div>
         </div>
     </section>
+
+    <!-- Hire Me Modal -->
+    <div class="modal-overlay" id="hire-modal" aria-hidden="true" role="dialog" aria-labelledby="hire-modal-title">
+        <div class="modal-content">
+            <button class="modal-close" id="hire-modal-close" aria-label="Close hire form">×</button>
+            <h2 id="hire-modal-title">Hire Sher Rahman</h2>
+            <form class="contact-form" id="hire-form">
+                <div class="hire-methods" role="radiogroup" aria-label="Choose send method">
+                    <p class="hire-method-label">Choose where to send your request</p>
+                    <label class="hire-method-option">
+                        <input type="radio" name="hire-method" value="email" checked>
+                        <span>Email Direct</span>
+                    </label>
+                    <label class="hire-method-option">
+                        <input type="radio" name="hire-method" value="whatsapp">
+                        <span>WhatsApp</span>
+                    </label>
+                </div>
+                <p class="hire-method-hint" id="hire-method-hint">Your request will be sent directly to email from the website.</p>
+                <input type="text" id="hire-name" placeholder="Your Name" required>
+                <input type="email" id="hire-email" placeholder="Your Email" required>
+                <input type="text" id="hire-subject" placeholder="Project Title" required>
+                <textarea id="hire-message" placeholder="Tell me about your project..." rows="5" required></textarea>
+                <button type="submit" class="submit-btn">Send Hire Request</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

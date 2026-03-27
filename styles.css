@@ -1478,6 +1478,131 @@ body {
     border-image: linear-gradient(90deg, #667eea 0%, #764ba2 100%) 1;
 }
 
+/* Hire-me modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(12, 14, 39, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 520px;
+    width: 100%;
+    padding: 1.8rem;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+    position: relative;
+}
+
+.modal-content h2 {
+    margin-bottom: 1rem;
+    color: #1b2a57;
+    font-size: 1.7rem;
+}
+
+.hire-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.hire-method-label {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #22356b;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.hire-method-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid #c6cee3;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #f8faff;
+    color: #1b2a57;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.hire-method-option:has(input:checked) {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #eef2ff 0%, #f8fbff 100%);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.16);
+}
+
+.hire-method-option:hover {
+    border-color: #667eea;
+    transform: translateY(-1px);
+}
+
+.hire-method-option input {
+    accent-color: #667eea;
+}
+
+.hire-method-hint {
+    margin: 0 0 0.9rem;
+    color: #5a678f;
+    font-size: 0.9rem;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#hire-form input,
+#hire-form textarea {
+    width: 100%;
+    border: 1px solid #c6cee3;
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.85rem;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+#hire-form .submit-btn {
+    width: 100%;
+    margin-top: 0.45rem;
+}
+
+#hire-form .submit-btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+@media (max-width: 520px) {
+    .hire-methods {
+        grid-template-columns: 1fr;
+    }
+}
+
+
 .footer-content {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1.5fr;

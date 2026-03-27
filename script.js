@@ -1,3 +1,60 @@
+// Hamburger Menu Toggle
+const hamburger = document.getElementById('hamburger');
+const navMenu = document.getElementById('nav-menu');
+
+if (hamburger) {
+    hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        
+        // Add ripple animation
+        hamburger.classList.remove('ripple');
+        void hamburger.offsetWidth; // Trigger reflow
+        hamburger.classList.add('ripple');
+    });
+
+    // Close menu when a link is clicked
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-container')) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
+    });
+}
+
+// CTA Button Hover + Click Effects
+const ctaButtons = document.querySelectorAll('.cta-button');
+ctaButtons.forEach(button => {
+    button.addEventListener('mouseenter', function() {
+        this.classList.add('hovering');
+    });
+    
+    button.addEventListener('mouseleave', function() {
+        if (!this.classList.contains('clicked')) {
+            this.classList.remove('hovering');
+        }
+    });
+
+    button.addEventListener('click', function() {
+        this.classList.add('clicked');
+        this.classList.add('hovering');
+        // Keep highlight for 2s after click
+        clearTimeout(this._hoverResetTimeout);
+        this._hoverResetTimeout = setTimeout(() => {
+            this.classList.remove('clicked');
+            this.classList.remove('hovering');
+        }, 2000);
+    });
+});
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -211,3 +268,80 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// React header + SPA style navigation (no full reload for section links)
+if (window.React && window.ReactDOM) {
+    const { useState, useEffect } = React;
+
+    function HeaderNav() {
+        const sections = [
+            { label: 'Home', id: 'home' },
+            { label: 'Services', id: 'services' },
+            { label: 'Projects', id: 'projects' },
+            { label: 'Skills', id: 'skills' },
+            { label: 'About', id: 'about' },
+            { label: 'Contact', id: 'contact' }
+        ];
+
+        const [active, setActive] = useState('home');
+
+        useEffect(() => {
+            const onScroll = () => {
+                const scroll = window.scrollY + 150;
+                let current = 'home';
+                sections.forEach(section => {
+                    const el = document.getElementById(section.id);
+                    if (el && el.offsetTop <= scroll) {
+                        current = section.id;
+                    }
+                });
+                setActive(current);
+            };
+
+            window.addEventListener('scroll', onScroll);
+            return () => window.removeEventListener('scroll', onScroll);
+        }, []);
+
+        return (
+            React.createElement('div', { className: 'nav-container' },
+                React.createElement('a', { href: '#home', className: 'logo', onClick: () => { setActive('home'); }},
+                    React.createElement('div', { className: 'logo-mark', 'aria-hidden': 'true' }, 'TV'),
+                    React.createElement('div', { className: 'logo-text' }, 'TechVerse'),
+                    React.createElement('div', { className: 'logo-sub' }, 'by Sher')
+                ),
+                React.createElement('div', { className: 'hamburger-menu', id: 'hamburger' },
+                    React.createElement('span', null),
+                    React.createElement('span', null),
+                    React.createElement('span', null)
+                ),
+                React.createElement('ul', { className: 'nav-menu', id: 'nav-menu' },
+                    sections.map(item => React.createElement('li', { key: item.id },
+                        React.createElement('a', {
+                            href: `#${item.id}`,
+                            className: `nav-link ${active === item.id ? 'active' : ''}`,
+                            onClick: (e) => {
+                                e.preventDefault();
+                                const tgt = document.getElementById(item.id);
+                                if (tgt) {
+                                    tgt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    setActive(item.id);
+                                }
+                            }
+                        }, item.label)
+                    ))
+                )
+            )
+        );
+    }
+
+    const rootElement = document.getElementById('react-nav-root');
+    if (rootElement) {
+        ReactDOM.createRoot(rootElement).render(React.createElement(HeaderNav));
+    }
+
+    // Show static fallback if React doesn't mount
+    const fallback = document.getElementById('legacy-fallback');
+    if (fallback) {
+        fallback.style.display = 'none';
+    }
+}

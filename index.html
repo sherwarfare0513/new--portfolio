@@ -12,9 +12,23 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar">
+        <div id="react-nav-root"></div>
+    </nav>
+
+    <!-- Original content is now controlled by React component and static fallback -->
+    <div id="legacy-fallback" style="display:none;">
         <div class="nav-container">
-            <div class="logo">TechVerse by Sher</div>
-            <ul class="nav-menu">
+            <a href="#home" class="logo" aria-label="TechVerse by Sher logo">
+                <div class="logo-mark" aria-hidden="true"><span>T</span><span>V</span></div>
+                <div class="logo-text">TechVerse</div>
+                <div class="logo-sub">by Sher</div>
+            </a>
+            <div class="hamburger-menu" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
                 <li><a href="#home" class="nav-link">Home</a></li>
                 <li><a href="#services" class="nav-link">Services</a></li>
                 <li><a href="#projects" class="nav-link">Projects</a></li>
@@ -23,7 +37,7 @@
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
         </div>
-    </nav>
+    </div>
 
     <!-- Home Section -->
     <section id="home" class="hero">
@@ -441,10 +455,16 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <div class="footer-logo">
-                        <h3>TechVerse by Sher</h3>
-                        <p>Transforming ideas into powerful digital experiences</p>
-                    </div>
+                    <a class="footer-logo" href="#home" aria-label="TechVerse by Sher logo">
+                        <div class="logo-mark footer-logo-mark" aria-hidden="true">
+                            <span>T</span><span>V</span>
+                        </div>
+                        <div>
+                            <div class="logo-text">TechVerse</div>
+                            <div class="logo-sub">by Sher</div>
+                        </div>
+                    </a>
+                    <p>Transforming ideas into powerful digital experiences</p>
                     <div class="footer-contact">
                         <div class="contact-item">
                             <i class="fas fa-envelope"></i>
@@ -531,6 +551,9 @@
         </div>
     </footer>
 
+    <!-- React library scripts -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="script.js"></script>
 </body>
 </html>
